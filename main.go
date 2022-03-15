@@ -1,15 +1,14 @@
 package main
 
 import (
-	"net/http"
-
 	"go-start/framework"
+	"net/http"
 )
 
 func main() {
 	server := &http.Server{
 		//自定义的请求核心处理函数
-		Handler: NewCore(),
+		Handler: framework.NewCore(),
 
 		Addr: ":8080",
 	}
