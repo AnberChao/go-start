@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cast"
 )
 
-const defaultMultparMemory = 32 << 20
+const defaultMultipartMemory = 32 << 20
 
 // 代表请求包含的方法
 type IRequest interface {

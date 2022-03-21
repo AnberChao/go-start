@@ -71,7 +71,7 @@ func (c *Core) Group(prefix string) IGroup {
 }
 
 // 匹配路由，如果没有匹配到，返回nil
-func (c *Core) FindRouteByRequest(request *http.Request) *node {
+func (c *Core) FindRouteNodeByRequest(request *http.Request) *node {
 	// uri 和 method 全部转换为大写，保证大小写不敏感
 	uri := request.URL.Path
 	method := request.Method
@@ -91,8 +91,8 @@ func (c *Core) ServeHTTP(response http.ResponseWriter, request *http.Request) {
 	ctx := NewContext(request, response)
 
 	// 寻找路由
-	router := c.FindRouteByRequest(request)
-	if router == nil {
+	node := c.FindRouteNodeByRequest(request)
+	if node == nil {
 		// 如果没有找到，这里打印日志
 		ctx.SetStatus(404).Json("not found")
 		return
