@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-start/framework"
+	"github.com/JoeZhao1/go-start/framework"
 	"net/http"
 )
 

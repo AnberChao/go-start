@@ -15,7 +15,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gin-gonic/gin/render"
+	"github.com/JoeZhao1/go-start/framework/gin/render"
 )
 
 const defaultMultipartMemory = 32 << 20 // 32 MB
