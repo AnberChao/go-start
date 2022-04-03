@@ -1,28 +1,36 @@
+// Copyright 2021 jianfengye.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
 package main
 
 import (
 	"context"
-	"github.com/JoeZhao1/go-start/framework/gin"
-	"github.com/JoeZhao1/go-start/framework/middleware"
-	"github.com/JoeZhao1/go-start/provider/demo"
+	"github.com/JoeZhao1/go-start/framework/provider/app"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	hadeHttp "github.com/JoeZhao1/go-start/app/http"
+	"github.com/JoeZhao1/go-start/app/provider/demo"
+	"github.com/JoeZhao1/go-start/framework/gin"
+	"github.com/JoeZhao1/go-start/framework/middleware"
 )
 
 func main() {
 	// 创建engine结构
 	core := gin.New()
 	// 绑定具体的服务
-	core.Bind(&demo.DemoServiceProvider{})
+	core.Bind(&app.HadeAppProvider{})
+	core.Bind(&demo.DemoProvider{})
 
 	core.Use(gin.Recovery())
 	core.Use(middleware.Cost())
 
-	registerRouter(core)
+	hadeHttp.Routes(core)
+
 	server := &http.Server{
 		Handler: core,
 		Addr:    ":8888",
