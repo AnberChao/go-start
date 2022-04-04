@@ -11,7 +11,10 @@ import (
 	"github.com/JoeZhao1/go-start/framework/provider/config"
 	"github.com/JoeZhao1/go-start/framework/provider/distributed"
 	"github.com/JoeZhao1/go-start/framework/provider/env"
+	"github.com/JoeZhao1/go-start/framework/provider/id"
 	"github.com/JoeZhao1/go-start/framework/provider/kernel"
+	"github.com/JoeZhao1/go-start/framework/provider/log"
+	"github.com/JoeZhao1/go-start/framework/provider/trace"
 )
 
 func main() {
@@ -23,6 +26,9 @@ func main() {
 	container.Bind(&env.StartEnvProvider{})
 	container.Bind(&distributed.LocalDistributedProvider{})
 	container.Bind(&config.StartConfigProvider{})
+	container.Bind(&id.StartIDProvider{})
+	container.Bind(&trace.StartTraceProvider{})
+	container.Bind(&log.StartLogServiceProvider{})
 
 	// 将HTTP引擎初始化,并且作为服务提供者绑定到服务容器中
 	if engine, err := http.NewHttpEngine(); err == nil {
