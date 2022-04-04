@@ -13,6 +13,7 @@ import (
 type StartApp struct {
 	container  framework.Container // 服务容器
 	baseFolder string              // 基础路径
+	appId      string              // 表示当前这个app的唯一id, 可以用于分布式锁等
 }
 
 // Version 实现版本
@@ -95,4 +96,8 @@ func NewStartApp(params ...interface{}) (interface{}, error) {
 	container := params[0].(framework.Container)
 	baseFolder := params[1].(string)
 	return &StartApp{baseFolder: baseFolder, container: container}, nil
+}
+// AppID 表示这个App的唯一ID
+func (s StartApp) AppID() string {
+	return s.appId
 }
