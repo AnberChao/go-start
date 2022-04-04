@@ -24,8 +24,8 @@ type Container interface {
 	MakeNew(key string, params []interface{}) (interface{}, error)
 }
 
-// HadeContainer 是服务容器的具体实现
-type HadeContainer struct {
+// StartContainer 是服务容器的具体实现
+type StartContainer struct {
 	Container
 	// providers 存储注册的服务提供者，key为字符串凭证
 	providers map[string]ServiceProvider
@@ -36,8 +36,8 @@ type HadeContainer struct {
 }
 
 // NewHadeContainer 创建一个服务容器
-func NewHadeContainer() *HadeContainer {
-	return &HadeContainer{
+func NewStartContainer() *StartContainer {
+	return &StartContainer{
 		providers: map[string]ServiceProvider{},
 		instances: map[string]interface{}{},
 		lock:      sync.RWMutex{},
@@ -45,9 +45,9 @@ func NewHadeContainer() *HadeContainer {
 }
 
 // PrintProviders 输出服务容器中注册的关键字
-func (hade *HadeContainer) PrintProviders() []string {
+func (start *StartContainer) PrintProviders() []string {
 	ret := []string{}
-	for _, provider := range hade.providers {
+	for _, provider := range start.providers {
 		name := provider.Name()
 
 		line := fmt.Sprint(name)
@@ -57,68 +57,68 @@ func (hade *HadeContainer) PrintProviders() []string {
 }
 
 // Bind 将服务容器和关键字做了绑定
-func (hade *HadeContainer) Bind(provider ServiceProvider) error {
-	hade.lock.Lock()
-	defer hade.lock.Unlock()
+func (start *StartContainer) Bind(provider ServiceProvider) error {
+	start.lock.Lock()
+	defer start.lock.Unlock()
 	key := provider.Name()
 
-	hade.providers[key] = provider
+	start.providers[key] = provider
 
 	// if provider is not defer
 	if provider.IsDefer() == false {
-		if err := provider.Boot(hade); err != nil {
+		if err := provider.Boot(start); err != nil {
 			return err
 		}
 		// 实例化方法
-		params := provider.Params(hade)
-		method := provider.Register(hade)
+		params := provider.Params(start)
+		method := provider.Register(start)
 		instance, err := method(params...)
 		if err != nil {
 			return errors.New(err.Error())
 		}
-		hade.instances[key] = instance
+		start.instances[key] = instance
 	}
 	return nil
 }
 
-func (hade *HadeContainer) IsBind(key string) bool {
-	return hade.findServiceProvider(key) != nil
+func (start *StartContainer) IsBind(key string) bool {
+	return start.findServiceProvider(key) != nil
 }
 
-func (hade *HadeContainer) findServiceProvider(key string) ServiceProvider {
-	hade.lock.RLock()
-	defer hade.lock.RUnlock()
-	if sp, ok := hade.providers[key]; ok {
+func (start *StartContainer) findServiceProvider(key string) ServiceProvider {
+	start.lock.RLock()
+	defer start.lock.RUnlock()
+	if sp, ok := start.providers[key]; ok {
 		return sp
 	}
 	return nil
 }
 
-func (hade *HadeContainer) Make(key string) (interface{}, error) {
-	return hade.make(key, nil, false)
+func (start *StartContainer) Make(key string) (interface{}, error) {
+	return start.make(key, nil, false)
 }
 
-func (hade *HadeContainer) MustMake(key string) interface{} {
-	serv, err := hade.make(key, nil, false)
+func (start *StartContainer) MustMake(key string) interface{} {
+	serv, err := start.make(key, nil, false)
 	if err != nil {
 		panic(err)
 	}
 	return serv
 }
 
-func (hade *HadeContainer) MakeNew(key string, params []interface{}) (interface{}, error) {
-	return hade.make(key, params, true)
+func (start *StartContainer) MakeNew(key string, params []interface{}) (interface{}, error) {
+	return start.make(key, params, true)
 }
 
-func (hade *HadeContainer) newInstance(sp ServiceProvider, params []interface{}) (interface{}, error) {
+func (start *StartContainer) newInstance(sp ServiceProvider, params []interface{}) (interface{}, error) {
 	// force new a
-	if err := sp.Boot(hade); err != nil {
+	if err := sp.Boot(start); err != nil {
 		return nil, err
 	}
 	if params == nil {
-		params = sp.Params(hade)
+		params = sp.Params(start)
 	}
-	method := sp.Register(hade)
+	method := sp.Register(start)
 	ins, err := method(params...)
 	if err != nil {
 		return nil, errors.New(err.Error())
@@ -127,30 +127,30 @@ func (hade *HadeContainer) newInstance(sp ServiceProvider, params []interface{})
 }
 
 // 真正的实例化一个服务
-func (hade *HadeContainer) make(key string, params []interface{}, forceNew bool) (interface{}, error) {
-	hade.lock.RLock()
-	defer hade.lock.RUnlock()
+func (start *StartContainer) make(key string, params []interface{}, forceNew bool) (interface{}, error) {
+	start.lock.RLock()
+	defer start.lock.RUnlock()
 	// 查询是否已经注册了这个服务提供者，如果没有注册，则返回错误
-	sp := hade.findServiceProvider(key)
+	sp := start.findServiceProvider(key)
 	if sp == nil {
 		return nil, errors.New("contract " + key + " have not register")
 	}
 
 	if forceNew {
-		return hade.newInstance(sp, params)
+		return start.newInstance(sp, params)
 	}
 
 	// 不需要强制重新实例化，如果容器中已经实例化了，那么就直接使用容器中的实例
-	if ins, ok := hade.instances[key]; ok {
+	if ins, ok := start.instances[key]; ok {
 		return ins, nil
 	}
 
 	// 容器中还未实例化，则进行一次实例化
-	inst, err := hade.newInstance(sp, nil)
+	inst, err := start.newInstance(sp, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	hade.instances[key] = inst
+	start.instances[key] = inst
 	return inst, nil
 }

@@ -86,7 +86,7 @@ func (s StartApp) TestFolder() string {
 }
 
 // NewHadeApp 初始化HadeApp
-func NewHadeApp(params ...interface{}) (interface{}, error) {
+func NewStartApp(params ...interface{}) (interface{}, error) {
 	if len(params) != 2 {
 		return nil, errors.New("param error")
 	}
