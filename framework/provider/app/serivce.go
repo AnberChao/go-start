@@ -10,20 +10,20 @@ import (
 )
 
 // HadeApp 代表hade框架的App实现
-type HadeApp struct {
+type StartApp struct {
 	container  framework.Container // 服务容器
 	baseFolder string              // 基础路径
 }
 
 // Version 实现版本
-func (h HadeApp) Version() string {
+func (s StartApp) Version() string {
 	return "0.0.3"
 }
 
 // BaseFolder 表示基础目录，可以代表开发场景的目录，也可以代表运行时候的目录
-func (h HadeApp) BaseFolder() string {
-	if h.baseFolder != "" {
-		return h.baseFolder
+func (s StartApp) BaseFolder() string {
+	if s.baseFolder != "" {
+		return s.baseFolder
 	}
 
 	// 如果没有设置，则使用参数
@@ -39,50 +39,50 @@ func (h HadeApp) BaseFolder() string {
 }
 
 // ConfigFolder  表示配置文件地址
-func (h HadeApp) ConfigFolder() string {
-	return filepath.Join(h.BaseFolder(), "config")
+func (s StartApp) ConfigFolder() string {
+	return filepath.Join(s.BaseFolder(), "config")
 }
 
 // LogFolder 表示日志存放地址
-func (h HadeApp) LogFolder() string {
-	return filepath.Join(h.StorageFolder(), "log")
+func (s StartApp) LogFolder() string {
+	return filepath.Join(s.StorageFolder(), "log")
 }
 
-func (h HadeApp) HttpFolder() string {
-	return filepath.Join(h.BaseFolder(), "http")
+func (s StartApp) HttpFolder() string {
+	return filepath.Join(s.BaseFolder(), "http")
 }
 
-func (h HadeApp) ConsoleFolder() string {
-	return filepath.Join(h.BaseFolder(), "console")
+func (s StartApp) ConsoleFolder() string {
+	return filepath.Join(s.BaseFolder(), "console")
 }
 
-func (h HadeApp) StorageFolder() string {
-	return filepath.Join(h.BaseFolder(), "storage")
+func (s StartApp) StorageFolder() string {
+	return filepath.Join(s.BaseFolder(), "storage")
 }
 
 // ProviderFolder 定义业务自己的服务提供者地址
-func (h HadeApp) ProviderFolder() string {
-	return filepath.Join(h.BaseFolder(), "provider")
+func (s StartApp) ProviderFolder() string {
+	return filepath.Join(s.BaseFolder(), "provider")
 }
 
 // MiddlewareFolder 定义业务自己定义的中间件
-func (h HadeApp) MiddlewareFolder() string {
-	return filepath.Join(h.HttpFolder(), "middleware")
+func (s StartApp) MiddlewareFolder() string {
+	return filepath.Join(s.HttpFolder(), "middleware")
 }
 
 // CommandFolder 定义业务定义的命令
-func (h HadeApp) CommandFolder() string {
-	return filepath.Join(h.ConsoleFolder(), "command")
+func (s StartApp) CommandFolder() string {
+	return filepath.Join(s.ConsoleFolder(), "command")
 }
 
 // RuntimeFolder 定义业务的运行中间态信息
-func (h HadeApp) RuntimeFolder() string {
-	return filepath.Join(h.StorageFolder(), "runtime")
+func (s StartApp) RuntimeFolder() string {
+	return filepath.Join(s.StorageFolder(), "runtime")
 }
 
 // TestFolder 定义测试需要的信息
-func (h HadeApp) TestFolder() string {
-	return filepath.Join(h.BaseFolder(), "test")
+func (s StartApp) TestFolder() string {
+	return filepath.Join(s.BaseFolder(), "test")
 }
 
 // NewHadeApp 初始化HadeApp
@@ -94,5 +94,5 @@ func NewHadeApp(params ...interface{}) (interface{}, error) {
 	// 有两个参数，一个是容器，一个是baseFolder
 	container := params[0].(framework.Container)
 	baseFolder := params[1].(string)
-	return &HadeApp{baseFolder: baseFolder, container: container}, nil
+	return &StartApp{baseFolder: baseFolder, container: container}, nil
 }
