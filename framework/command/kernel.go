@@ -6,7 +6,7 @@ import "github.com/JoeZhao1/go-start/framework/cobra"
 func AddKernelCommands(root *cobra.Command) {
 	root.AddCommand(DemoCommand)
 
-	//root.AddCommand(envCommand)
+	root.AddCommand(envCommand)
 	//root.AddCommand(deployCommand)
 	//
 	// cron
