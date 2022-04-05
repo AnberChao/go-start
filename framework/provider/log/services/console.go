@@ -11,7 +11,7 @@ type StartConsoleLog struct {
 	StartLog
 }
 
-// NewStartConsoleLog 实例化HadeConsoleLog
+// NewStartConsoleLog 实例化StartConsoleLog
 func NewStartConsoleLog(params ...interface{}) (interface{}, error) {
 	c := params[0].(framework.Container)
 	level := params[1].(contract.LogLevel)

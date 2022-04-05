@@ -22,7 +22,7 @@ type StartRotateLog struct {
 	file string
 }
 
-// NewStartRotateLog 实例化HadeRotateLog
+// NewStartRotateLog 实例化StartRotateLog
 func NewStartRotateLog(params ...interface{}) (interface{}, error) {
 	// 参数解析
 	c := params[0].(framework.Container)
