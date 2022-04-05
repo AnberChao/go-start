@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-// HadeConfig  表示hade框架的配置文件服务
+// StartConfig  表示start框架的配置文件服务
 type StartConfig struct {
 	c        framework.Container    // 容器
 	folder   string                 // 文件夹
@@ -87,13 +87,8 @@ func NewStartConfig(params ...interface{}) (interface{}, error) {
 	envFolder := params[1].(string)
 	envMaps := params[2].(map[string]string)
 
-	// 检查文件夹是否存在
-	if _, err := os.Stat(envFolder); os.IsNotExist(err) {
-		return nil, errors.New("folder " + envFolder + " not exist: " + err.Error())
-	}
-
 	// 实例化
-	startConf := &StartConfig{
+	hadeConf := &StartConfig{
 		c:        container,
 		folder:   envFolder,
 		envMaps:  envMaps,
@@ -103,6 +98,13 @@ func NewStartConfig(params ...interface{}) (interface{}, error) {
 		lock:     sync.RWMutex{},
 	}
 
+	// 检查文件夹是否存在
+	if _, err := os.Stat(envFolder); os.IsNotExist(err) {
+		// 这里修改成为不返回错误，是让new方法可以通过
+		return hadeConf, nil
+		//return nil, errors.New("folder " + envFolder + " not exist: " + err.Error())
+	}
+
 	// 读取每个文件
 	files, err := ioutil.ReadDir(envFolder)
 	if err != nil {
@@ -110,7 +112,7 @@ func NewStartConfig(params ...interface{}) (interface{}, error) {
 	}
 	for _, file := range files {
 		fileName := file.Name()
-		err := startConf.loadConfigFile(envFolder, fileName)
+		err := hadeConf.loadConfigFile(envFolder, fileName)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -148,15 +150,15 @@ func NewStartConfig(params ...interface{}) (interface{}, error) {
 
 					if ev.Op&fsnotify.Create == fsnotify.Create {
 						log.Println("创建文件 : ", ev.Name)
-						startConf.loadConfigFile(folder, fileName)
+						hadeConf.loadConfigFile(folder, fileName)
 					}
 					if ev.Op&fsnotify.Write == fsnotify.Write {
 						log.Println("写入文件 : ", ev.Name)
-						startConf.loadConfigFile(folder, fileName)
+						hadeConf.loadConfigFile(folder, fileName)
 					}
 					if ev.Op&fsnotify.Remove == fsnotify.Remove {
 						log.Println("删除文件 : ", ev.Name)
-						startConf.removeConfigFile(folder, fileName)
+						hadeConf.removeConfigFile(folder, fileName)
 					}
 				}
 			case err := <-watch.Errors:
@@ -168,9 +170,10 @@ func NewStartConfig(params ...interface{}) (interface{}, error) {
 		}
 	}()
 
-	return startConf, nil
+	return hadeConf, nil
 }
 
+// replace 表示使用环境变量maps替换context中的env(xxx)的环境变量
 func replace(content []byte, maps map[string]string) []byte {
 	if maps == nil {
 		return content
@@ -185,6 +188,7 @@ func replace(content []byte, maps map[string]string) []byte {
 	return content
 }
 
+// 查找某个路径的配置项
 func searchMap(source map[string]interface{}, path []string) interface{} {
 	if len(path) == 0 {
 		return source
@@ -216,6 +220,8 @@ func searchMap(source map[string]interface{}, path []string) interface{} {
 
 // 通过path来获取某个配置项
 func (conf *StartConfig) find(key string) interface{} {
+	conf.lock.RLock()
+	defer conf.lock.RUnlock()
 	return searchMap(conf.confMaps, strings.Split(key, conf.keyDelim))
 }
 
@@ -249,7 +255,7 @@ func (conf *StartConfig) GetTime(key string) time.Time {
 	return cast.ToTime(conf.find(key))
 }
 
-// GetString get string typen
+// GetString get string type
 func (conf *StartConfig) GetString(key string) string {
 	return cast.ToString(conf.find(key))
 }

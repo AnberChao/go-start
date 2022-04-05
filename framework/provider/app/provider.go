@@ -5,12 +5,12 @@ import (
 	"github.com/JoeZhao1/go-start/framework/contract"
 )
 
-// HadeAppProvider 提供App的具体实现方法
+// StartAppProvider 提供App的具体实现方法
 type StartAppProvider struct {
 	BaseFolder string
 }
 
-// Register 注册HadeApp方法
+// Register 注册StartApp方法
 func (s *StartAppProvider) Register(container framework.Container) framework.NewInstance {
 	return NewStartApp
 }

@@ -120,7 +120,7 @@ func (log *StartLog) SetLevel(level contract.LogLevel) {
 	log.level = level
 }
 
-// SetCxtFielder will get fields from context
+// SetCtxFielder SetCxtFielder will get fields from context
 func (log *StartLog) SetCtxFielder(handler contract.CtxFielder) {
 	log.ctxFielder = handler
 }
