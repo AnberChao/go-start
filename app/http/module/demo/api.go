@@ -39,7 +39,7 @@ func (api *DemoApi) Demo(c *gin.Context) {
 	logger := c.MustMakeLog()
 	logger.Info(c, "demo test error", map[string]interface{}{
 		"api":  "demo/demo",
-		"user": "jianfengye",
+		"user": "JoeZhao1",
 	})
 
 	c.JSON(200, password)
