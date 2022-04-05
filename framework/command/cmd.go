@@ -3,15 +3,17 @@ package command
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/JoeZhao1/go-start/framework/cobra"
-	"github.com/JoeZhao1/go-start/framework/contract"
-	"github.com/JoeZhao1/go-start/framework/util"
-	"github.com/jianfengye/collection"
-	"github.com/pkg/errors"
 	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/JoeZhao1/go-start/framework/cobra"
+	"github.com/JoeZhao1/go-start/framework/contract"
+	"github.com/JoeZhao1/go-start/framework/util"
+
+	"github.com/jianfengye/collection"
+	"github.com/pkg/errors"
 )
 
 // 初始化command相关命令
@@ -128,10 +130,13 @@ var cmdCreateCommand = &cobra.Command{
 
 // 命令行工具模版
 var cmdTmpl string = `package {{.}}
+
 import (
 	"fmt"
+
 	"github.com/JoeZhao1/go-start/framework/cobra"
 )
+
 var {{.|title}}Command = &cobra.Command{
 	Use:   "{{.}}",
 	Short: "{{.}}",
@@ -141,4 +146,5 @@ var {{.|title}}Command = &cobra.Command{
 		return nil
 	},
 }
+
 `

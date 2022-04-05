@@ -4,11 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/JoeZhao1/go-start/framework/cobra"
-	"github.com/JoeZhao1/go-start/framework/contract"
 	"github.com/JoeZhao1/go-start/framework/util"
 	"github.com/go-git/go-git/v5"
-
 	"github.com/jianfengye/collection"
 	"github.com/pkg/errors"
 	"io/ioutil"
@@ -17,6 +14,9 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/JoeZhao1/go-start/framework/cobra"
+	"github.com/JoeZhao1/go-start/framework/contract"
 )
 
 // 初始化中间件相关命令
@@ -121,7 +121,7 @@ var middlewareMigrateCommand = &cobra.Command{
 			isContain := bytes.Contains(c, []byte("github.com/gin-gonic/gin"))
 			if isContain {
 				fmt.Println("更新文件:" + path)
-				c = bytes.ReplaceAll(c, []byte("github.com/gin-gonic/gin"), []byte("github.com/gohade/hade/framework/gin"))
+				c = bytes.ReplaceAll(c, []byte("github.com/gin-gonic/gin"), []byte("github.com/JoeZhao1/go-start/framework/gin"))
 				err = ioutil.WriteFile(path, c, 0644)
 				if err != nil {
 					return err
@@ -200,11 +200,14 @@ var middlewareCreateCommand = &cobra.Command{
 }
 
 var middlewareTmp string = `package {{.}}
-import "github.com/gohade/hade/framework/gin"
+
+import "github.com/JoeZhao1/go-start/framework/gin"
+
 // {{.|title}}Middleware 代表中间件函数
 func {{.|title}}Middleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Next()
 	}
 }
+
 `

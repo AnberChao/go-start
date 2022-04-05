@@ -3,16 +3,18 @@ package command
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/JoeZhao1/go-start/framework/contract"
-	"github.com/JoeZhao1/go-start/framework/util"
-	"github.com/JoeZhao1/go-start/framework/cobra"
-	"github.com/JoeZhao1/go-start/framework"
-	"github.com/jianfengye/collection"
-	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/JoeZhao1/go-start/framework"
+	"github.com/JoeZhao1/go-start/framework/cobra"
+	"github.com/JoeZhao1/go-start/framework/contract"
+	"github.com/JoeZhao1/go-start/framework/util"
+
+	"github.com/jianfengye/collection"
+	"github.com/pkg/errors"
 )
 
 // 初始化provider相关服务
@@ -40,9 +42,9 @@ var providerListCommand = &cobra.Command{
 	Short: "列出容器内的所有服务",
 	RunE: func(c *cobra.Command, args []string) error {
 		container := c.GetContainer()
-		hadeContainer := container.(*framework.StartContainer)
+		startContainer := container.(*framework.StartContainer)
 		// 获取字符串凭证
-		list := hadeContainer.NameList()
+		list := startContainer.NameList()
 		// 打印
 		for _, line := range list {
 			println(line)
@@ -157,7 +159,9 @@ var providerCreateCommand = &cobra.Command{
 }
 
 var contractTmp string = `package {{.}}
+
 const {{.|title}}Key = "{{.}}"
+
 type Service interface {
 	// 请在这里定义你的方法
     Foo() string
@@ -165,39 +169,52 @@ type Service interface {
 `
 
 var providerTmp string = `package {{.}}
+
 import (
-	"github.com/gohade/hade/framework"
+	"github.com/JoeZhao1/go-start/framework"
 )
+
 type {{.|title}}Provider struct {
 	framework.ServiceProvider
+
 	c framework.Container
 }
+
 func (sp *{{.|title}}Provider) Name() string {
 	return {{.|title}}Key
 }
+
 func (sp *{{.|title}}Provider) Register(c framework.Container) framework.NewInstance {
 	return New{{.|title}}Service
 }
+
 func (sp *{{.|title}}Provider) IsDefer() bool {
 	return false
 }
+
 func (sp *{{.|title}}Provider) Params(c framework.Container) []interface{} {
 	return []interface{}{c}
 }
+
 func (sp *{{.|title}}Provider) Boot(c framework.Container) error {
 	return nil
 }
+
 `
 
 var serviceTmp string = `package {{.}}
-import "github.com/gohade/hade/framework"
+
+import "github.com/JoeZhao1/go-start/framework"
+
 type {{.|title}}Service struct {
 	container framework.Container
 }
+
 func New{{.|title}}Service(params ...interface{}) (interface{}, error) {
 	container := params[0].(framework.Container)
 	return &{{.|title}}Service{container: container}, nil
 }
+
 func (s *{{.|title}}Service) Foo() string {
     return ""
 }

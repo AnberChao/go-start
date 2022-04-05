@@ -2,8 +2,8 @@ package command
 
 import (
 	"fmt"
-	"github.com/JoeZhao1/go-start/framework/contract"
 	"github.com/JoeZhao1/go-start/framework/cobra"
+	"github.com/JoeZhao1/go-start/framework/contract"
 	"github.com/kr/pretty"
 )
 
