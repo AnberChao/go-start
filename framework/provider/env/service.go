@@ -22,7 +22,7 @@ type StartEnv struct {
 // .env的文件格式 FOO_ENV=BAR
 func NewStartEnv(params ...interface{}) (interface{}, error) {
 	if len(params) != 1 {
-		return nil, errors.New("NewHadeEnv param error")
+		return nil, errors.New("NewStartEnv param error")
 	}
 
 	// 读取folder文件
