@@ -11,7 +11,7 @@ import (
 )
 
 func TestStartConfig_GetInt(t *testing.T) {
-	Convey("test go-start env normal case", t, func() {
+	Convey("test start env normal case", t, func() {
 		basePath := tests.BasePath
 		folder := filepath.Join(basePath, "config")
 		serv, err := NewStartConfig(folder, map[string]string{}, contract.EnvDevelopment)

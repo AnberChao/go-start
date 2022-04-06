@@ -11,26 +11,26 @@ type StartAppProvider struct {
 }
 
 // Register 注册StartApp方法
-func (s *StartAppProvider) Register(container framework.Container) framework.NewInstance {
+func (h *StartAppProvider) Register(container framework.Container) framework.NewInstance {
 	return NewStartApp
 }
 
 // Boot 启动调用
-func (s *StartAppProvider) Boot(container framework.Container) error {
+func (h *StartAppProvider) Boot(container framework.Container) error {
 	return nil
 }
 
 // IsDefer 是否延迟初始化
-func (s *StartAppProvider) IsDefer() bool {
+func (h *StartAppProvider) IsDefer() bool {
 	return false
 }
 
 // Params 获取初始化参数
-func (s *StartAppProvider) Params(container framework.Container) []interface{} {
-	return []interface{}{container, s.BaseFolder}
+func (h *StartAppProvider) Params(container framework.Container) []interface{} {
+	return []interface{}{container, h.BaseFolder}
 }
 
 // Name 获取字符串凭证
-func (s *StartAppProvider) Name() string {
+func (h *StartAppProvider) Name() string {
 	return contract.AppKey
 }

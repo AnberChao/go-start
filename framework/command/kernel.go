@@ -14,12 +14,12 @@ func AddKernelCommands(root *cobra.Command) {
 	root.AddCommand(initConfigCommand())
 	// build 命令
 	root.AddCommand(initBuildCommand())
-	//// go build
-	//root.AddCommand(goCommand)
-	//// npm build
-	//root.AddCommand(npmCommand)
-	//// dev
-	//root.AddCommand(initDevCommand())
+	// go build
+	root.AddCommand(goCommand)
+	// npm build
+	root.AddCommand(npmCommand)
+	// dev
+	root.AddCommand(initDevCommand())
 	// cmd
 	root.AddCommand(initCmdCommand())
 	// provider

@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-// StartApp 代表go-start框架的App实现
+// StartApp 代表Start框架的App实现
 type StartApp struct {
 	container  framework.Container // 服务容器
 	baseFolder string              // 基础路径
@@ -58,14 +58,14 @@ func (app StartApp) HttpFolder() string {
 	if val, ok := app.configMap["http_folder"]; ok {
 		return val
 	}
-	return filepath.Join(app.BaseFolder(), "http")
+	return filepath.Join(app.BaseFolder(), "app", "http")
 }
 
 func (app StartApp) ConsoleFolder() string {
 	if val, ok := app.configMap["console_folder"]; ok {
 		return val
 	}
-	return filepath.Join(app.BaseFolder(), "console")
+	return filepath.Join(app.BaseFolder(), "app", "console")
 }
 
 func (app StartApp) StorageFolder() string {
@@ -80,7 +80,7 @@ func (app StartApp) ProviderFolder() string {
 	if val, ok := app.configMap["provider_folder"]; ok {
 		return val
 	}
-	return filepath.Join(app.BaseFolder(), "provider")
+	return filepath.Join(app.BaseFolder(), "app", "provider")
 }
 
 // MiddlewareFolder 定义业务自己定义的中间件

@@ -12,8 +12,8 @@ import (
 func initBuildCommand() *cobra.Command {
 	buildCommand.AddCommand(buildSelfCommand)
 	buildCommand.AddCommand(buildBackendCommand)
-	//buildCommand.AddCommand(buildFrontendCommand)
-	//buildCommand.AddCommand(buildAllCommand)
+	buildCommand.AddCommand(buildFrontendCommand)
+	buildCommand.AddCommand(buildAllCommand)
 	return buildCommand
 }
 
@@ -58,45 +58,45 @@ var buildBackendCommand = &cobra.Command{
 	},
 }
 
-//var buildFrontendCommand = &cobra.Command{
-//	Use:   "frontend",
-//	Short: "使用npm编译前端",
-//	RunE: func(c *cobra.Command, args []string) error {
-//		// 获取path路径下的npm命令
-//		path, err := exec.LookPath("npm")
-//		if err != nil {
-//			log.Fatalln("请安装npm在你的PATH路径下")
-//		}
-//
-//		// 执行npm run build
-//		cmd := exec.Command(path, "run", "build")
-//		// 将输出保存在out中
-//		out, err := cmd.CombinedOutput()
-//		if err != nil {
-//			fmt.Println("=============  前端编译失败 ============")
-//			fmt.Println(string(out))
-//			fmt.Println("=============  前端编译失败 ============")
-//			return err
-//		}
-//		// 打印输出
-//		fmt.Print(string(out))
-//		fmt.Println("=============  前端编译成功 ============")
-//		return nil
-//	},
-//}
-//
-//var buildAllCommand = &cobra.Command{
-//	Use:   "all",
-//	Short: "同时编译前端和后端",
-//	RunE: func(c *cobra.Command, args []string) error {
-//		err := buildFrontendCommand.RunE(c, args)
-//		if err != nil {
-//			return err
-//		}
-//		err = buildBackendCommand.RunE(c, args)
-//		if err != nil {
-//			return err
-//		}
-//		return nil
-//	},
-//}
+var buildFrontendCommand = &cobra.Command{
+	Use:   "frontend",
+	Short: "使用npm编译前端",
+	RunE: func(c *cobra.Command, args []string) error {
+		// 获取path路径下的npm命令
+		path, err := exec.LookPath("npm")
+		if err != nil {
+			log.Fatalln("请安装npm在你的PATH路径下")
+		}
+
+		// 执行npm run build
+		cmd := exec.Command(path, "run", "build")
+		// 将输出保存在out中
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Println("=============  前端编译失败 ============")
+			fmt.Println(string(out))
+			fmt.Println("=============  前端编译失败 ============")
+			return err
+		}
+		// 打印输出
+		fmt.Print(string(out))
+		fmt.Println("=============  前端编译成功 ============")
+		return nil
+	},
+}
+
+var buildAllCommand = &cobra.Command{
+	Use:   "all",
+	Short: "同时编译前端和后端",
+	RunE: func(c *cobra.Command, args []string) error {
+		err := buildFrontendCommand.RunE(c, args)
+		if err != nil {
+			return err
+		}
+		err = buildBackendCommand.RunE(c, args)
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+}

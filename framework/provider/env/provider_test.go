@@ -12,7 +12,7 @@ import (
 )
 
 func TestStartEnvProvider(t *testing.T) {
-	Convey("test go-start env normal case", t, func() {
+	Convey("test start env normal case", t, func() {
 		basePath := tests.BasePath
 		c := framework.NewStartContainer()
 		sp := &app.StartAppProvider{BaseFolder: basePath}

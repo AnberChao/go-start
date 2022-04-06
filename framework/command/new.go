@@ -80,7 +80,7 @@ var newCommand = &cobra.Command{
 			}
 		}
 		{
-			// 获取go-start的版本
+			// 获取start的版本
 			client := github.NewClient(nil)
 			prompt := &survey.Input{
 				Message: "请输入版本名称(参考 https://github.com/JoeZhao1/go-start/releases，默认为最新版本)：",
@@ -164,8 +164,8 @@ var newCommand = &cobra.Command{
 
 			if path == filepath.Join(folder, "go.mod") {
 				fmt.Println("更新文件:" + path)
-				c = bytes.ReplaceAll(c, []byte("module github.com/JoeZhao1/go-start"), []byte("module "+mod))
-				c = bytes.ReplaceAll(c, []byte("require ("), []byte("require (\n\tgithub.com/JoeZhao1/go-start "+version))
+				c = bytes.ReplaceAll(c, []byte("module github.com/JoeZhao1/go-start/"), []byte("module "+mod))
+				c = bytes.ReplaceAll(c, []byte("require ("), []byte("require (\n\tgithub.com/JoeZhao1/go-start/ "+version))
 				err = ioutil.WriteFile(path, c, 0644)
 				if err != nil {
 					return err
@@ -173,10 +173,10 @@ var newCommand = &cobra.Command{
 				return nil
 			}
 
-			isContain := bytes.Contains(c, []byte("github.com/JoeZhao1/go-start/app"))
+			isContain := bytes.Contains(c, []byte("github.com/JoeZhao1/go-start//app"))
 			if isContain {
 				fmt.Println("更新文件:" + path)
-				c = bytes.ReplaceAll(c, []byte("github.com/JoeZhao1/go-start/app"), []byte(mod+"/app"))
+				c = bytes.ReplaceAll(c, []byte("github.com/JoeZhao1/go-start//app"), []byte(mod+"/app"))
 				err = ioutil.WriteFile(path, c, 0644)
 				if err != nil {
 					return err

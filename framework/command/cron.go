@@ -2,9 +2,6 @@ package command
 
 import (
 	"fmt"
-	"github.com/JoeZhao1/go-start/framework/cobra"
-	"github.com/JoeZhao1/go-start/framework/contract"
-	"github.com/JoeZhao1/go-start/framework/util"
 	"github.com/sevlyar/go-daemon"
 	"io/ioutil"
 	"os"
@@ -12,6 +9,10 @@ import (
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/JoeZhao1/go-start/framework/cobra"
+	"github.com/JoeZhao1/go-start/framework/contract"
+	"github.com/JoeZhao1/go-start/framework/util"
 
 	"github.com/erikdubbelboer/gspt"
 )

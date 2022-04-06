@@ -17,7 +17,7 @@ func NewStartCustomLog(params ...interface{}) (interface{}, error) {
 	formatter := params[3].(contract.Formatter)
 	output := params[4].(io.Writer)
 
-	log := &StartCustomLog{}
+	log := &StartConsoleLog{}
 
 	log.SetLevel(level)
 	log.SetCtxFielder(ctxFielder)

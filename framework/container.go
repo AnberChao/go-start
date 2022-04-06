@@ -1,9 +1,10 @@
 package framework
 
 import (
-	"errors"
 	"fmt"
 	"sync"
+
+	"github.com/pkg/errors"
 )
 
 // Container 是一个服务容器，提供绑定服务和获取服务的功能
@@ -45,9 +46,9 @@ func NewStartContainer() *StartContainer {
 }
 
 // PrintProviders 输出服务容器中注册的关键字
-func (start *StartContainer) PrintProviders() []string {
+func (s *StartContainer) PrintProviders() []string {
 	ret := []string{}
-	for _, provider := range start.providers {
+	for _, provider := range s.providers {
 		name := provider.Name()
 
 		line := fmt.Sprint(name)
@@ -57,68 +58,69 @@ func (start *StartContainer) PrintProviders() []string {
 }
 
 // Bind 将服务容器和关键字做了绑定
-func (start *StartContainer) Bind(provider ServiceProvider) error {
-	start.lock.Lock()
-	defer start.lock.Unlock()
+func (s *StartContainer) Bind(provider ServiceProvider) error {
+	s.lock.Lock()
 	key := provider.Name()
 
-	start.providers[key] = provider
+	s.providers[key] = provider
+	s.lock.Unlock()
 
 	// if provider is not defer
 	if provider.IsDefer() == false {
-		if err := provider.Boot(start); err != nil {
+		if err := provider.Boot(s); err != nil {
 			return err
 		}
 		// 实例化方法
-		params := provider.Params(start)
-		method := provider.Register(start)
+		params := provider.Params(s)
+		method := provider.Register(s)
 		instance, err := method(params...)
 		if err != nil {
+			fmt.Println("bind service provider ", key, " error: ", err)
 			return errors.New(err.Error())
 		}
-		start.instances[key] = instance
+		s.instances[key] = instance
 	}
 	return nil
 }
 
-func (start *StartContainer) IsBind(key string) bool {
-	return start.findServiceProvider(key) != nil
+func (s *StartContainer) IsBind(key string) bool {
+	return s.findServiceProvider(key) != nil
 }
 
-func (start *StartContainer) findServiceProvider(key string) ServiceProvider {
-	start.lock.RLock()
-	defer start.lock.RUnlock()
-	if sp, ok := start.providers[key]; ok {
+func (s *StartContainer) findServiceProvider(key string) ServiceProvider {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
+	if sp, ok := s.providers[key]; ok {
 		return sp
 	}
 	return nil
 }
 
-func (start *StartContainer) Make(key string) (interface{}, error) {
-	return start.make(key, nil, false)
+func (s *StartContainer) Make(key string) (interface{}, error) {
+	return s.make(key, nil, false)
 }
 
-func (start *StartContainer) MustMake(key string) interface{} {
-	serv, err := start.make(key, nil, false)
+func (s *StartContainer) MustMake(key string) interface{} {
+	serv, err := s.make(key, nil, false)
 	if err != nil {
-		panic(err)
+		panic("container not contain key " + key)
 	}
 	return serv
 }
 
-func (start *StartContainer) MakeNew(key string, params []interface{}) (interface{}, error) {
-	return start.make(key, params, true)
+func (s *StartContainer) MakeNew(key string, params []interface{}) (interface{}, error) {
+	return s.make(key, params, true)
 }
 
-func (start *StartContainer) newInstance(sp ServiceProvider, params []interface{}) (interface{}, error) {
+func (s *StartContainer) newInstance(sp ServiceProvider, params []interface{}) (interface{}, error) {
 	// force new a
-	if err := sp.Boot(start); err != nil {
+	if err := sp.Boot(s); err != nil {
 		return nil, err
 	}
 	if params == nil {
-		params = sp.Params(start)
+		params = sp.Params(s)
 	}
-	method := sp.Register(start)
+	method := sp.Register(s)
 	ins, err := method(params...)
 	if err != nil {
 		return nil, errors.New(err.Error())
@@ -127,38 +129,38 @@ func (start *StartContainer) newInstance(sp ServiceProvider, params []interface{
 }
 
 // 真正的实例化一个服务
-func (start *StartContainer) make(key string, params []interface{}, forceNew bool) (interface{}, error) {
-	start.lock.RLock()
-	defer start.lock.RUnlock()
+func (s *StartContainer) make(key string, params []interface{}, forceNew bool) (interface{}, error) {
+	s.lock.RLock()
+	defer s.lock.RUnlock()
 	// 查询是否已经注册了这个服务提供者，如果没有注册，则返回错误
-	sp := start.findServiceProvider(key)
+	sp := s.findServiceProvider(key)
 	if sp == nil {
 		return nil, errors.New("contract " + key + " have not register")
 	}
 
 	if forceNew {
-		return start.newInstance(sp, params)
+		return s.newInstance(sp, params)
 	}
 
 	// 不需要强制重新实例化，如果容器中已经实例化了，那么就直接使用容器中的实例
-	if ins, ok := start.instances[key]; ok {
+	if ins, ok := s.instances[key]; ok {
 		return ins, nil
 	}
 
 	// 容器中还未实例化，则进行一次实例化
-	inst, err := start.newInstance(sp, nil)
+	inst, err := s.newInstance(sp, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	start.instances[key] = inst
+	s.instances[key] = inst
 	return inst, nil
 }
 
 // NameList 列出容器中所有服务提供者的字符串凭证
-func (start *StartContainer) NameList() []string {
+func (s *StartContainer) NameList() []string {
 	ret := []string{}
-	for _, provider := range start.providers {
+	for _, provider := range s.providers {
 		name := provider.Name()
 		ret = append(ret, name)
 	}
